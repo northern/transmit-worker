@@ -1,0 +1,19 @@
+version: '3'
+services:
+  worker:
+    build: .
+    command: yarn dev
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    environment:
+      TRANSMIT_URL: ${TRANSMIT_URL}
+
+      QUEUE_TYPE: ${QUEUE_TYPE}
+      QUEUE_NAME: ${QUEUE_NAME}
+
+      AWS_CLIENT_VERSION: ${AWS_CLIENT_VERSION}
+      AWS_CLIENT_REGION: ${AWS_CLIENT_REGION}
+
+      AWS_ACCESS_KEY_ID: ${AWS_CLIENT_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_CLIENT_SECRET}
