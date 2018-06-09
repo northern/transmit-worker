@@ -6,7 +6,8 @@
   "description": "Postways Transmit Worker",
   "main": "src/index.js",
   "dependencies": {
-    "aws-sdk": "^2.252.1"
+    "aws-sdk": "^2.252.1",
+    "request": "^2.87.0"
   },
   "scripts": {
     "dev": "nodemon src/index.js --exec babel-node & webpack --config=webpack.config.dev.js --watch --mode development",

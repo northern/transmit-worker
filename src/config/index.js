@@ -4,6 +4,10 @@ let config
 export default () => {
   if (!config) {
     config = {
+      isDebug: process.env.NODE_ENV !== 'production',
+      transmit: {
+        url: process.env.TRANSMIT_URL,
+      },
       aws: {
         client: {
           version: process.env.AWS_CLIENT_VERSION,

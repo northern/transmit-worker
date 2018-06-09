@@ -1,5 +1,6 @@
 
 import Aws from 'aws-sdk'
+import request from 'request'
 
 import config from './config'
 
@@ -42,6 +43,26 @@ function acknowledge(sqsClient, queueUrl, messageId) {
   })
 }
 
+function processTransmission(transmissionId) {
+  return new Promise((resolve, reject) => {
+    const req = request({
+      method: 'POST',
+      url: `${config().transmit.url}/transmissions/${transmissionId}`,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }, (err, res, body) => {
+      if (err) {
+        reject(err)
+      }
+      else {
+        resolve(body)
+      }
+    })
+  })
+}
+
 async function process(sqsClient) {
   const queueUrl = await createQueue(sqsClient)
 
@@ -72,9 +93,27 @@ async function process(sqsClient) {
     })
 
     if (message) {
-      console.log(message)
+      //console.log(message)
 
-      await acknowledge(sqsClient, queueUrl, message.ReceiptHandle)
+      const body = JSON.parse(message.Body)
+      console.log(body)
+
+      try {
+        switch (body.type) {
+          case 'transmission': {
+            const result = await processTransmission(body.data.id)
+            console.log(result)
+          }
+          break
+        }
+
+        await acknowledge(sqsClient, queueUrl, message.ReceiptHandle)
+      }
+      catch(err) {
+        console.log(err)
+
+        // TODO: Reschedule
+      }
     }
   }
 }
