@@ -43,11 +43,11 @@ function acknowledge(sqsClient, queueUrl, messageId) {
   })
 }
 
-function processTransmission(transmissionId) {
+function processMessage(messageId) {
   return new Promise((resolve, reject) => {
     const req = request({
       method: 'POST',
-      url: `${config().transmit.url}/transmissions/${transmissionId}`,
+      url: `${config().transmit.url}/messages/${messageId}`,
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -100,8 +100,8 @@ async function process(sqsClient) {
 
       try {
         switch (body.type) {
-          case 'transmission': {
-            const result = await processTransmission(body.data.id)
+          case 'message': {
+            const result = await processMessage(body.data.id)
             console.log(result)
           }
           break
