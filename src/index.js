@@ -9,7 +9,7 @@ function createQueue(sqsClient) {
     const params = {
       QueueName: config().queue.name,
       Attributes: {
-        DelaySeconds: '60',
+        DelaySeconds: '0',
         MessageRetentionPeriod: '86400',
       }
     }
