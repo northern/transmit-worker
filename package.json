@@ -10,11 +10,10 @@
     "request": "^2.87.0"
   },
   "scripts": {
-    "dev": "nodemon src/index.js --exec babel-node & webpack --config=webpack.config.dev.js --watch --mode development",
-    "dist": "webpack --config=webpack.config.dist.js --mode production",
+    "dev": "nodemon src/index.js --exec babel-node",
     "test": "jest",
     "test:watch": "jest --watch",
-    "start": "node dist/main.js"
+    "start": "node src/index.js --exec babel-node"
   },
   "jest": {
     "modulePathIgnorePatterns": [
