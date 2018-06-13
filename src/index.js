@@ -4,7 +4,7 @@ import request from 'request'
 
 import config from './config'
 
-function createQueue(sqsClient) {
+const createQueue = (sqsClient) => {
   return new Promise((resolve, reject) => {
     const params = {
       QueueName: config().queue.name,
@@ -25,7 +25,7 @@ function createQueue(sqsClient) {
   })
 }
 
-function acknowledge(sqsClient, queueUrl, messageId) {
+const acknowledge = (sqsClient, queueUrl, messageId) => {
   return new Promise((resolve, reject) => {
     var params = {
       QueueUrl: queueUrl,
@@ -43,7 +43,7 @@ function acknowledge(sqsClient, queueUrl, messageId) {
   })
 }
 
-function processMessage(messageId) {
+const processMessage = (messageId) => {
   return new Promise((resolve, reject) => {
     const req = request({
       method: 'POST',
@@ -57,7 +57,27 @@ function processMessage(messageId) {
         reject(err)
       }
       else {
-        resolve(body)
+        resolve(JSON.parse(body))
+      }
+    })
+  })
+}
+
+const processTransmission = (transmissionId) => {
+  return new Promise((resolve, reject) => {
+    const req = request({
+      method: 'POST',
+      url: `${config().transmit.url}/transmissions/${transmissionId}`,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }, (err, res, body) => {
+      if (err) {
+        reject(err)
+      }
+      else {
+        resolve(JSON.parse(body))
       }
     })
   })
@@ -93,8 +113,6 @@ async function process(sqsClient) {
     })
 
     if (message) {
-      //console.log(message)
-
       const body = JSON.parse(message.Body)
       console.log(body)
 
@@ -102,7 +120,13 @@ async function process(sqsClient) {
         switch (body.type) {
           case 'message': {
             const result = await processMessage(body.data.id)
-            console.log(result)
+            console.log("%o", result)
+          }
+          break
+
+          case 'transmission': {
+            const result = await processTransmission(body.data.id)
+            console.log("%o", result)
           }
           break
         }
